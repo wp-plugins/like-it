@@ -37,7 +37,9 @@ $likeit_dbVersion = '1.0';
 
 register_activation_hook(__FILE__, 'likeit_activate');
 function likeit_activate() {
-	global $wpdb, $likeit_dbVersion, $likeit_table;
+	global $wpdb, $likeit_dbVersion;
+	
+	$likeit_table = $wpdb->prefix . 'likeit';
 	
 	if($wpdb->get_var("show tables like '$likeit_table'") != $likeit_table) {
 		$sql = "CREATE TABLE  $likeit_table  (
