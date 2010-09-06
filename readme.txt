@@ -4,7 +4,7 @@ Tags: like, love, star, heart, post
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=2A38D8TGNFPGA&lc=BG&item_name=Nikolay%20Yordanov&item_number=Like%2dit%20donation&currency_code=EUR&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted
 Requires at least: 2.9
 Tested up to: 3.0.1
-Stable tag: 1.1.2
+Stable tag: 1.1.3
 
 Like-it allows visitors to just "like" a post, preventing multiple meaningless comments or providing a faster user experience.
 
