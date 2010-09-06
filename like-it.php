@@ -3,7 +3,7 @@
 Plugin Name: Like-it
 Plugin URI: http://nyordanov.com/projects
 Description: Like-it allows post readers mark their approval of a post by clicking the Like-it button, instead of posting yet another "I like this post" comment
-Version: 1.1.1
+Version: 1.1.2
 Author: Nikolay Yordanov
 Author URI: http://nyordanov.com
 License: GPLv2
@@ -27,8 +27,11 @@ if ( !function_exists( 'add_action' ) ) {
 	exit;
 }
 
-global $likeit_table = $wpdb->prefix . 'likeit';
-global $likeit_dbVersion = '1.0';
+global $likeit_table;
+global $likeit_dbVersion;
+
+$likeit_table = $wpdb->prefix . 'likeit';
+$likeit_dbVersion = '1.0';
 
 // create database and save default options
 
