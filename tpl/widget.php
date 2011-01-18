@@ -1,12 +1,12 @@
 <ul class="likeit-widget-posts">
-<?php foreach($posts as $post): ?>
+<?php foreach($posts as $lpost): ?>
 
-<?php $post_data = get_post($post->post_id, OBJECT); ?>
+<?php $post_data = get_post($lpost->post_id, OBJECT); ?>
 
 	<li>
 		<h4>
-			<a href="<?php get_permalink($post->post_id) ?>" title="<?php echo $post_data->post_title ?>">
-			<?php echo $post_data->post_title ?> (<?php echo $post->likes ?>)
+			<a href="<?php echo get_permalink($lpost->post_id) ?>" title="<?php echo $post_data->post_title ?>">
+			<?php echo $post_data->post_title ?> (<?php echo $lpost->likes ?>)
 			</a>
 		</h4>
 	</li>

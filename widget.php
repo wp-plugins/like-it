@@ -21,7 +21,7 @@ class Likeit_Widget extends WP_Widget {
 		$instance = $old_instance;
 		$instance['title'] = strip_tags($new_instance['title']);
 		$instance['displayed'] = strip_tags($new_instance['displayed']);
-        return $instance;
+		return $instance;
 	}
 
 	function widget($args, $instance) {
