@@ -3,7 +3,7 @@
 Plugin Name: Like-it
 Plugin URI: http://nyordanov.com/projects
 Description: Like-it allows post readers mark their approval of a post by clicking the Like-it button, instead of posting yet another "I like this post" comment
-Version: 2.0
+Version: 2.2
 Author: Nikolay Yordanov
 Author URI: http://nyordanov.com
 License: GPLv2
@@ -56,11 +56,12 @@ function likeit_activate() {
 		require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 		dbDelta($sql);
 
-		add_option("likeit_dbVersion", $likeit_dbVersion);
+		update_option("likeit_dbVersion", $likeit_dbVersion);
 	}
 	
 	add_option('likeit-text', 'Like!', '', 'yes');
 	add_option('likeit-autodisplay', 'on', '', 'yes');
+	add_option('likeit-per-page', '30', '', 'yes');
 }
 
 // delete table during uninstall
@@ -75,22 +76,56 @@ function likeit_uninstall() {
 	}
 }
 
-// register plugin config
+// add menus
 
 add_action('admin_menu', 'likeit_config_page');
 function likeit_config_page() {
-	if ( function_exists('add_options_page') )
-		add_options_page(__('Like-it Configuration'), __('Like-it Configuration'), 'manage_options', 'likeit-config', 'likeit_conf');
+	if(function_exists('add_menu_page'))
+		add_menu_page( __('Like-it'), __('Like-it'), 'manage_options', 'likeit', 'likeit_stats' );
+	if(function_exists('add_submenu_page')) {
+		add_submenu_page( 'likeit', __('Like-it Stats'), __('Like-it Stats'), 'manage_options', 'likeit', 'likeit_stats');
+		add_submenu_page( 'likeit', __('Like-it Configuration'), __('Like-it Configuration'), 'manage_options', 'likeit_conf', 'likeit_conf');
+	}
+}
+
+// statistics page
+
+function likeit_stats() {
+	global $wpdb, $likeit_table;
+
+	$page = (isset($_GET['paged'])) ? intval($_GET['paged']) : 1;
+	$likeit_per_page = get_option('likeit-per-page');
+	$from = ($page-1) * $likeit_per_page;
+	$likes = $wpdb->get_results("SELECT * FROM $likeit_table LIMIT $from, $likeit_per_page");
+	
+	foreach($likes as &$like) {
+		$ipinfo_url = 'http://ipinfodb.com/ip_query.php?ip='.$like->ip.'&output=json&timezone=false';
+		if(function_exists('curl_init')) {
+			$request = curl_init();
+			curl_setopt($request, CURLOPT_URL, $ipinfo_url);
+			curl_setopt($request, CURLOPT_RETURNTRANSFER, true);
+			$like->ip_info = curl_exec($request);
+			curl_close($request);
+		}
+		else
+			$like->ip_info = file_get_contents($ipinfo_url);
+
+		$like->ip_info = json_decode($like->ip_info);
+		
+		$like->post_url = get_permalink($like->post_id);
+		$like->post_title = get_post($like->post_id)->post_title;
+		
+		$like->post_liked_count = likeit_get_count_by_post_id($like->post_id);
+	}
+
+	$total_likes = $wpdb->get_var("SELECT COUNT(*) FROM $likeit_table");
+	
+	require('tpl/stats.php');
 }
 
 // plugin config page 
 
 function likeit_conf() {
-
-    $opt_name = 'mt_favorite_color';
-    $data_field_name = 'mt_favorite_color';
-
-    $opt_val = get_option( $opt_name );
 	
 	if( isset($_POST['likeit-text']) ) {
         update_option( 'likeit-text', $_POST['likeit-text'] );
@@ -108,20 +143,20 @@ function likeit_register_settings() {
 }
 
 // add javascript
-add_action('wp_print_scripts', likeit_scripts);
+add_action('wp_print_scripts', 'likeit_scripts');
 function likeit_scripts() {
 	wp_enqueue_script( 'likeit', plugin_dir_url(__FILE__). 'content/like-it.js', array('jquery'), '0.1');
 	wp_localize_script( 'likeit', 'likeit', array( 'ajaxurl' => admin_url( 'admin-ajax.php' ) ) );
 }
 
 // add css
-add_action('wp_print_styles', likeit_styles);
+add_action('wp_print_styles', 'likeit_styles');
 function likeit_styles() {
 	wp_enqueue_style('likeit', plugin_dir_url(__FILE__).'content/like-it.css', false, '0.1', 'all');
 }
 
 // add filter to echo the Like-it button
-add_filter('the_content', likeit_button_filter);
+add_filter('the_content', 'likeit_button_filter');
 function likeit_button_filter($content) {
 	if( !(is_page() || is_feed()) && get_option('likeit-autodisplay') == 'on' )
 		$content .= likeit_get_button();
@@ -136,7 +171,7 @@ function likeit_button() {
 // generate the Like-it button
 function likeit_get_button() {
 	$canvote = likeit_can_vote(get_the_ID(), $_SERVER['REMOTE_ADDR']) ? 'likeit-canvote' : 'likeit-voted';
-	$text = get_option('likeit-text');
+	$text = stripslashes(get_option('likeit-text'));
 	$id = get_the_ID();
 	$count = likeit_get_count_by_post_id($id);
 	

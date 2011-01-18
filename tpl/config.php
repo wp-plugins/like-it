@@ -34,7 +34,7 @@ if ( !function_exists( 'add_action' ) ) {
 	<table class="form-table">
 		<tr>
 			<th scope="row"><label for="likeit-text"><?php _e('Like-it button text') ?></label></th>
-			<td><input type="text" id="likeit-text" name="likeit-text" value="<?php echo get_option('likeit-text')?>" /></td>
+			<td><input type="text" id="likeit-text" name="likeit-text" value="<?php echo stripslashes(get_option('likeit-text'))?>" /></td>
 		</tr>
 		<tr>
 			<th scope="row"><label for="likeit-autodisplay"><?php _e('Display button') ?></label></th>
@@ -42,7 +42,7 @@ if ( !function_exists( 'add_action' ) ) {
 				<input type="checkbox" id="likeit-autodisplay" name="likeit-autodisplay" <?php if(get_option('likeit-autodisplay') == 'on'): ?>checked="checked"<?php endif ?> />
 				<label for="likeit-autodisplay">Append button to the end of each post</label>
 				<br />
-				<span class="description"><?php _e('If you want to place it elsewhere, you may use <code>&lt?php likeit_button(); ?&gt;</code> in your theme, but remember that it uses <code>get_the_ID()</code> to get current post\'s id') ?></span>
+				<span class="description"><?php _e('If you want to place it elsewhere, you may use <code>&lt?php if(function_exists("likeit_button")) likeit_button(); ?&gt;</code> in your theme, but remember that it uses <code>get_the_ID()</code> to get current post\'s id') ?></span>
 			</td>
 		</tr>
 		<tr>

@@ -3,8 +3,8 @@ Contributors: nikolay.yordanov
 Tags: like, love, star, heart, post
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=2A38D8TGNFPGA&lc=BG&item_name=Nikolay%20Yordanov&item_number=Like%2dit%20donation&currency_code=EUR&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted
 Requires at least: 2.9
-Tested up to: 3.0.1
-Stable tag: 2.0
+Tested up to: 3.0.4
+Stable tag: 2.2
 
 Like-it allows visitors to just "like" a post, preventing multiple meaningless comments or providing a faster user experience.
 
@@ -17,6 +17,18 @@ Like-it allows visitors to just "like" a post instead of commenting, preventing 
 Extract the zip file and just drop the contents in the wp-content/plugins/ directory of your WordPress installation and then activate the Plugin from Plugins page.
 
 == Changelog ==
+
+= 2.2 =
+
+* Links to post in the widget haven't been displayed 
+
+= 2.1 =
+
+* Added statistics page 
+** IP
+** Geolocation
+** Time
+** Post title
 
 = 2.0 =
 
